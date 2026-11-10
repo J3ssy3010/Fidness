@@ -1,9 +1,13 @@
 package fidness.modelo;
 
+import java.io.Serializable;
+
 /**
  * Representa un ejercicio de la aplicación Fidness.
  */
-public class Ejercicio {
+public class Ejercicio implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int idEjercicio;
     private String nombre;
@@ -11,7 +15,6 @@ public class Ejercicio {
     private String grupoMuscular;
     private String instrucciones;
 
-    // Constructor
     public Ejercicio(int idEjercicio, String nombre, String descripcion,
             String grupoMuscular, String instrucciones) {
 
@@ -22,7 +25,6 @@ public class Ejercicio {
         this.instrucciones = instrucciones;
     }
 
-    // Métodos para consultar los atributos
     public int getIdEjercicio() {
         return idEjercicio;
     }
@@ -43,7 +45,6 @@ public class Ejercicio {
         return instrucciones;
     }
 
-    // Métodos para modificar los atributos
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -60,14 +61,12 @@ public class Ejercicio {
         this.instrucciones = instrucciones;
     }
 
-    // Muestra la información del ejercicio
     public String mostrarInformacion() {
         return "Ejercicio: " + nombre
                 + "\nDescripción: " + descripcion
                 + "\nGrupo muscular: " + grupoMuscular;
     }
 
-    // Muestra las instrucciones del ejercicio
     public String mostrarInstrucciones() {
         return instrucciones;
     }

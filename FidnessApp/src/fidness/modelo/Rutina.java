@@ -1,25 +1,26 @@
 package fidness.modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Representa una rutina de entrenamiento del usuario.
  */
-public class Rutina {
+public class Rutina implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int idRutina;
     private String nombre;
     private List<Ejercicio> ejercicios;
 
-    // Constructor
     public Rutina(int idRutina, String nombre) {
         this.idRutina = idRutina;
         this.nombre = nombre;
         this.ejercicios = new ArrayList<>();
     }
 
-    // Métodos para consultar los atributos
     public int getIdRutina() {
         return idRutina;
     }
@@ -32,24 +33,20 @@ public class Rutina {
         return ejercicios;
     }
 
-    // Modifica el nombre de la rutina
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    // Agrega un ejercicio a la rutina
     public void agregarEjercicio(Ejercicio ejercicio) {
         if (ejercicio != null) {
             ejercicios.add(ejercicio);
         }
     }
 
-    // Elimina un ejercicio de la rutina
     public void eliminarEjercicio(Ejercicio ejercicio) {
         ejercicios.remove(ejercicio);
     }
 
-    // Muestra el contenido de la rutina
     public String mostrarRutina() {
         StringBuilder resultado = new StringBuilder();
 
@@ -69,7 +66,6 @@ public class Rutina {
         return resultado.toString();
     }
 
-    // Prepara el contenido de la rutina para exportarlo
     public String exportarRutina() {
         return mostrarRutina();
     }
