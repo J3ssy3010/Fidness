@@ -1,5 +1,6 @@
 package fidness.vista;
 
+import fidness.modelo.GestorRutinas;
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,7 +11,11 @@ public class VentanaMenuPrincipal extends JFrame {
     private JButton btnMisRutinas;
     private JButton btnCerrarSesion;
 
+    private GestorRutinas gestorRutinas;
+
     public VentanaMenuPrincipal() {
+
+        gestorRutinas = new GestorRutinas();
 
         setTitle("Fidness - Menú principal");
         setSize(500, 450);
@@ -28,37 +33,52 @@ public class VentanaMenuPrincipal extends JFrame {
         lblTitulo.setBounds(165, 25, 200, 45);
         panel.add(lblTitulo);
 
-        JLabel lblBienvenida = new JLabel("¡Bienvenido a tu espacio de entrenamiento!");
+        JLabel lblBienvenida = new JLabel(
+                "¡Bienvenido a tu espacio de entrenamiento!"
+        );
         lblBienvenida.setFont(new Font("Arial", Font.PLAIN, 14));
         lblBienvenida.setForeground(Color.LIGHT_GRAY);
         lblBienvenida.setBounds(90, 75, 330, 25);
         panel.add(lblBienvenida);
 
-        btnConsultarEjercicios = crearBoton("CONSULTAR EJERCICIOS", 120);
-        btnCrearRutina = crearBoton("CREAR RUTINA", 185);
-        btnMisRutinas = crearBoton("MIS RUTINAS", 250);
-        btnCerrarSesion = crearBoton("CERRAR SESIÓN", 325);
+        btnConsultarEjercicios = crearBoton(
+                "CONSULTAR EJERCICIOS", 120
+        );
+
+        btnCrearRutina = crearBoton(
+                "CREAR RUTINA", 185
+        );
+
+        btnMisRutinas = crearBoton(
+                "MIS RUTINAS", 250
+        );
+
+        btnCerrarSesion = crearBoton(
+                "CERRAR SESIÓN", 325
+        );
 
         panel.add(btnConsultarEjercicios);
         panel.add(btnCrearRutina);
         panel.add(btnMisRutinas);
         panel.add(btnCerrarSesion);
 
-        // Abrir ventana de consulta de ejercicios
         btnConsultarEjercicios.addActionListener(e -> {
             VentanaConsultarEjercicios ventana =
                     new VentanaConsultarEjercicios();
-
             ventana.setVisible(true);
         });
 
-        btnCrearRutina.addActionListener(e ->
-                JOptionPane.showMessageDialog(this,
-                        "Módulo de creación de rutinas en desarrollo."));
+        btnCrearRutina.addActionListener(e -> {
+            VentanaCrearRutina ventana =
+                    new VentanaCrearRutina(gestorRutinas);
+            ventana.setVisible(true);
+        });
 
-        btnMisRutinas.addActionListener(e ->
-                JOptionPane.showMessageDialog(this,
-                        "Módulo de mis rutinas en desarrollo."));
+        btnMisRutinas.addActionListener(e -> {
+            VentanaMisRutinas ventana =
+                    new VentanaMisRutinas(gestorRutinas);
+            ventana.setVisible(true);
+        });
 
         btnCerrarSesion.addActionListener(e -> {
             dispose();
@@ -71,7 +91,6 @@ public class VentanaMenuPrincipal extends JFrame {
     private JButton crearBoton(String texto, int posicionY) {
 
         JButton boton = new JButton(texto);
-
         boton.setBounds(115, posicionY, 270, 42);
         boton.setBackground(new Color(130, 90, 220));
         boton.setForeground(Color.WHITE);

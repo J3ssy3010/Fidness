@@ -1,61 +1,23 @@
 package fidness.vista;
 
+import fidness.modelo.CatalogoEjercicios;
+import fidness.modelo.Ejercicio;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.util.List;
 
 public class VentanaConsultarEjercicios extends JFrame {
 
     private JComboBox<String> cmbGrupoMuscular;
-    private JList<String> listaEjercicios;
-    private DefaultListModel<String> modeloLista;
+    private JList<Ejercicio> listaEjercicios;
+    private DefaultListModel<Ejercicio> modeloLista;
     private JTextArea txtInformacion;
 
-    private final String[][] ejercicios = {
-        {"Sentadilla", "Piernas", "Ejercicio para fortalecer los músculos de las piernas y glúteos.",
-            "1. Coloque los pies al ancho de los hombros.\n"
-            + "2. Flexione las rodillas y baje la cadera.\n"
-            + "3. Mantenga la espalda recta.\n"
-            + "4. Regrese lentamente a la posición inicial."},
-
-        {"Peso muerto", "Piernas", "Ejercicio que trabaja principalmente las piernas y los glúteos.",
-            "1. Coloque los pies al ancho de las caderas.\n"
-            + "2. Sujete la barra frente a sus piernas.\n"
-            + "3. Incline la cadera manteniendo la espalda recta.\n"
-            + "4. Levante el peso de manera controlada."},
-
-        {"Extensión de piernas", "Piernas", "Ejercicio enfocado en fortalecer los cuádriceps.",
-            "1. Siéntese correctamente en la máquina.\n"
-            + "2. Coloque los tobillos detrás del soporte.\n"
-            + "3. Extienda las piernas lentamente.\n"
-            + "4. Regrese a la posición inicial."},
-
-        {"Remo con barra", "Espalda", "Ejercicio que fortalece los músculos de la espalda.",
-            "1. Sujete la barra con ambas manos.\n"
-            + "2. Incline ligeramente el torso hacia adelante.\n"
-            + "3. Lleve la barra hacia el abdomen.\n"
-            + "4. Baje la barra lentamente."},
-
-        {"Jalón al pecho", "Espalda", "Ejercicio para trabajar los músculos de la espalda.",
-            "1. Siéntese frente a la máquina.\n"
-            + "2. Sujete la barra con ambas manos.\n"
-            + "3. Lleve la barra hacia la parte superior del pecho.\n"
-            + "4. Regrese lentamente a la posición inicial."},
-
-        {"Press de banca", "Brazos", "Ejercicio que trabaja principalmente el pecho y los tríceps.",
-            "1. Acuéstese en el banco.\n"
-            + "2. Sujete la barra con ambas manos.\n"
-            + "3. Baje la barra de manera controlada.\n"
-            + "4. Empuje la barra hacia arriba."},
-
-        {"Curl de bíceps", "Brazos", "Ejercicio para fortalecer los músculos bíceps.",
-            "1. Sostenga una mancuerna en cada mano.\n"
-            + "2. Mantenga los codos cerca del cuerpo.\n"
-            + "3. Flexione los brazos llevando las mancuernas hacia los hombros.\n"
-            + "4. Baje lentamente las mancuernas."}
-    };
+    private List<Ejercicio> ejercicios;
 
     public VentanaConsultarEjercicios() {
+
+        ejercicios = CatalogoEjercicios.obtenerEjercicios();
 
         setTitle("Fidness - Consultar ejercicios");
         setSize(650, 520);
@@ -96,6 +58,24 @@ public class VentanaConsultarEjercicios extends JFrame {
         listaEjercicios.setFont(new Font("Arial", Font.PLAIN, 14));
         listaEjercicios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        listaEjercicios.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus
+                );
+
+                if (value instanceof Ejercicio) {
+                    setText(((Ejercicio) value).getNombre());
+                }
+
+                return this;
+            }
+        });
+
         JScrollPane scrollLista = new JScrollPane(listaEjercicios);
         scrollLista.setBounds(40, 160, 250, 220);
         panelPrincipal.add(scrollLista);
@@ -111,7 +91,9 @@ public class VentanaConsultarEjercicios extends JFrame {
         txtInformacion.setLineWrap(true);
         txtInformacion.setWrapStyleWord(true);
         txtInformacion.setEditable(false);
-        txtInformacion.setText("Seleccione un ejercicio para consultar su información e instrucciones.");
+        txtInformacion.setText(
+                "Seleccione un ejercicio para consultar su información e instrucciones."
+        );
 
         JScrollPane scrollInformacion = new JScrollPane(txtInformacion);
         scrollInformacion.setBounds(320, 160, 280, 220);
@@ -143,42 +125,37 @@ public class VentanaConsultarEjercicios extends JFrame {
     private void cargarEjercicios() {
 
         modeloLista.clear();
-        txtInformacion.setText("Seleccione un ejercicio para consultar su información e instrucciones.");
+
+        txtInformacion.setText(
+                "Seleccione un ejercicio para consultar su información e instrucciones."
+        );
 
         String grupoSeleccionado =
                 cmbGrupoMuscular.getSelectedItem().toString();
 
-        for (String[] ejercicio : ejercicios) {
+        for (Ejercicio ejercicio : ejercicios) {
 
             if (grupoSeleccionado.equals("Todos")
-                    || ejercicio[1].equals(grupoSeleccionado)) {
+                    || ejercicio.getGrupoMuscular().equals(grupoSeleccionado)) {
 
-                modeloLista.addElement(ejercicio[0]);
+                modeloLista.addElement(ejercicio);
             }
         }
     }
 
     private void mostrarInformacion() {
 
-        String seleccionado = listaEjercicios.getSelectedValue();
+        Ejercicio seleccionado = listaEjercicios.getSelectedValue();
 
         if (seleccionado == null) {
             return;
         }
 
-        for (String[] ejercicio : ejercicios) {
-
-            if (ejercicio[0].equals(seleccionado)) {
-
-                txtInformacion.setText(
-                        "EJERCICIO: " + ejercicio[0]
-                        + "\n\nGRUPO MUSCULAR: " + ejercicio[1]
-                        + "\n\nDESCRIPCIÓN:\n" + ejercicio[2]
-                        + "\n\nINSTRUCCIONES:\n" + ejercicio[3]
-                );
-
-                return;
-            }
-        }
+        txtInformacion.setText(
+                "EJERCICIO: " + seleccionado.getNombre()
+                + "\n\nGRUPO MUSCULAR: " + seleccionado.getGrupoMuscular()
+                + "\n\nDESCRIPCIÓN:\n" + seleccionado.getDescripcion()
+                + "\n\nINSTRUCCIONES:\n" + seleccionado.mostrarInstrucciones()
+        );
     }
 }
