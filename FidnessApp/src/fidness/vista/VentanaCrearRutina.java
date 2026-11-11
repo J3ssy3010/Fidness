@@ -4,6 +4,7 @@ import fidness.modelo.CatalogoEjercicios;
 import fidness.modelo.Ejercicio;
 import fidness.modelo.GestorRutinas;
 import fidness.modelo.Rutina;
+import fidness.modelo.ValidadorRutina;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -19,11 +20,13 @@ public class VentanaCrearRutina extends JFrame {
     private DefaultListModel<Ejercicio> modeloSeleccionados;
 
     private GestorRutinas gestorRutinas;
+    private ValidadorRutina validador;
     private List<Ejercicio> ejercicios;
 
     public VentanaCrearRutina(GestorRutinas gestorRutinas) {
 
         this.gestorRutinas = gestorRutinas;
+        this.validador = new ValidadorRutina();
         this.ejercicios = CatalogoEjercicios.obtenerEjercicios();
 
         setTitle("Fidness - Crear rutina");
@@ -72,7 +75,9 @@ public class VentanaCrearRutina extends JFrame {
 
         modeloDisponibles = new DefaultListModel<>();
         listaDisponibles = new JList<>(modeloDisponibles);
-        listaDisponibles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaDisponibles.setSelectionMode(
+                ListSelectionModel.SINGLE_SELECTION
+        );
         listaDisponibles.setFont(new Font("Arial", Font.PLAIN, 13));
         configurarLista(listaDisponibles);
 
@@ -88,7 +93,9 @@ public class VentanaCrearRutina extends JFrame {
 
         modeloSeleccionados = new DefaultListModel<>();
         listaSeleccionados = new JList<>(modeloSeleccionados);
-        listaSeleccionados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaSeleccionados.setSelectionMode(
+                ListSelectionModel.SINGLE_SELECTION
+        );
         listaSeleccionados.setFont(new Font("Arial", Font.PLAIN, 13));
         configurarLista(listaSeleccionados);
 
@@ -127,8 +134,11 @@ public class VentanaCrearRutina extends JFrame {
 
             @Override
             public Component getListCellRendererComponent(
-                    JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus) {
+                    JList<?> list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(
                         list, value, index, isSelected, cellHasFocus
@@ -213,18 +223,10 @@ public class VentanaCrearRutina extends JFrame {
 
         String nombre = txtNombreRutina.getText().trim();
 
-        if (nombre.isEmpty()) {
+        if (!validador.validarNombre(nombre)) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Debe ingresar el nombre de la rutina."
-            );
-            return;
-        }
-
-        if (modeloSeleccionados.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Debe agregar al menos un ejercicio."
+                    "Debe ingresar un nombre válido para la rutina."
             );
             return;
         }
@@ -233,6 +235,14 @@ public class VentanaCrearRutina extends JFrame {
 
         for (int i = 0; i < modeloSeleccionados.size(); i++) {
             rutina.agregarEjercicio(modeloSeleccionados.getElementAt(i));
+        }
+
+        if (!validador.validarRutinaCompleta(rutina)) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe agregar al menos un ejercicio a la rutina."
+            );
+            return;
         }
 
         gestorRutinas.guardarRutina(rutina);
